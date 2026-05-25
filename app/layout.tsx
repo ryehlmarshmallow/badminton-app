@@ -11,8 +11,8 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Next.js and Supabase Starter Kit",
-  description: "The fastest way to build apps with Next.js and Supabase",
+  title: "Badminton Connect VN",
+  description: "Tìm kiếm trận đấu, ghép sân linh hoạt và quản lý ví ảo thông minh. Tham gia ngay cộng đồng cầu lông sôi động nhất.",
 };
 
 const inter = Inter({
