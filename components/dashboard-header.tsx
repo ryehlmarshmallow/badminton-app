@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { Badge } from "@/components/ui/badge";
 import { Wallet } from "lucide-react";
-import { topUpBalance } from "@/lib/actions";
+import Link from "next/link";
 
 export async function DashboardHeader() {
   const supabase = await createClient();
@@ -50,12 +50,9 @@ export async function DashboardHeader() {
           </p>
         </div>
         <div className="ml-4 border-l pl-4 border-emerald-200 dark:border-emerald-800">
-           {/* Quick Top-up Button (MVP Dummy) */}
-           <form action={topUpBalance}>
-             <button type="submit" className="text-xs font-bold text-emerald-600 hover:text-emerald-500 underline underline-offset-4 decoration-2">
-               Nạp nhanh 200k
-             </button>
-           </form>
+           <Link href="/dashboard/top-up" className="text-xs font-bold text-emerald-600 hover:text-emerald-500 underline underline-offset-4 decoration-2">
+             Nạp tiền
+           </Link>
         </div>
       </div>
     </div>

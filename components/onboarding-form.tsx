@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function OnboardingForm({
@@ -23,7 +22,6 @@ export function OnboardingForm({
   const [skillLevel, setSkillLevel] = useState("Beginner");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
 
   const handleOnboarding = async (e: React.SubmitEvent) => {
     e.preventDefault();
@@ -60,7 +58,6 @@ export function OnboardingForm({
           <CardTitle className="text-2xl text-center">Chào mừng bạn!</CardTitle>
           <CardDescription className="text-center">
             Hãy hoàn tất hồ sơ để bắt đầu tham gia các trận đấu cầu lông.
-            Bạn sẽ nhận được 500.000đ quà tặng khởi tạo!
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -132,7 +129,7 @@ export function OnboardingForm({
               </div>
               {error && <p className="text-sm text-red-500">{error}</p>}
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Đang xử lý..." : "Hoàn tất & Nhận 500.000đ"}
+                {isLoading ? "Đang xử lý..." : "Hoàn tất"}
               </Button>
             </div>
           </form>

@@ -72,15 +72,22 @@ export async function leaveRoom(roomId: string) {
   if (roomError || !room) throw new Error("Không tìm thấy sân");
   if (!room.player_registry.includes(user.id)) throw new Error("Bạn chưa tham gia sân này");
 
-  // 1. Remove from registry
+  // 1. Remove from registry (or delete the room if empty)
   const newRegistry = room.player_registry.filter((id: string) => id !== user.id);
   
-  const { error: leaveError } = await supabase
-    .from("rooms")
-    .update({ player_registry: newRegistry })
-    .eq("id", roomId);
-
-  if (leaveError) throw new Error("Lỗi khi rời sân");
+  if (newRegistry.length === 0) {
+    const { error: deleteError } = await supabase
+      .from("rooms")
+      .delete()
+      .eq("id", roomId);
+    if (deleteError) throw new Error("Lỗi khi rời và hủy sân");
+  } else {
+    const { error: leaveError } = await supabase
+      .from("rooms")
+      .update({ player_registry: newRegistry })
+      .eq("id", roomId);
+    if (leaveError) throw new Error("Lỗi khi rời sân");
+  }
 
   // 2. Refund balance
   const { data: profile } = await supabase
@@ -111,6 +118,7 @@ export async function createRoom(formData: FormData) {
   const endTime = formData.get("endTime") as string;
   const price = parseInt(formData.get("price") as string);
   const maxPlayers = parseInt(formData.get("maxPlayers") as string) || 4;
+  const description = formData.get("description") as string;
 
   // Wallet check for creator deposit
   const { data: profile } = await supabase
@@ -137,38 +145,11 @@ export async function createRoom(formData: FormData) {
     end_time: endTime,
     price,
     max_players: maxPlayers,
-    creator_id: user.id,
-    player_registry: [user.id] // Creator is auto-joined
+    player_registry: [user.id], // Creator is auto-joined
+    description: description || null
   });
 
   if (error) throw error;
-
-  revalidatePath("/dashboard");
-}
-
-export async function cancelRoom(roomId: string) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) throw new Error("Chưa đăng nhập");
-
-  const { data: room } = await supabase.from("rooms").select("*").eq("id", roomId).single();
-  if (!room) throw new Error("Không tìm thấy sân");
-  if (room.creator_id !== user.id) throw new Error("Chỉ chủ sân mới có thể hủy");
-
-  // Rejection Rule: If other players are in the room
-  if (room.player_registry.length > 1) {
-    throw new Error("Không thể hủy sân khi đang có người chơi khác tham gia. Vui lòng yêu cầu họ rời sân trước.");
-  }
-
-  // Refund creator
-  const { data: profile } = await supabase.from("profiles").select("balance").eq("id", user.id).single();
-  if (profile) {
-    await supabase.from("profiles").update({ balance: profile.balance + room.price }).eq("id", user.id);
-  }
-
-  // Delete room
-  await supabase.from("rooms").delete().eq("id", roomId);
 
   revalidatePath("/dashboard");
 }

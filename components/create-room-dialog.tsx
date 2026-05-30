@@ -104,6 +104,15 @@ export function CreateRoomDialog() {
               <Label htmlFor="location">Địa điểm (Sân)</Label>
               <Input id="location" name="location" placeholder="Sân cầu lông Kỳ Hòa" required />
             </div>
+            <div className="grid gap-2">
+              <Label htmlFor="description">Mô tả chi tiết</Label>
+              <textarea
+                id="description"
+                name="description"
+                placeholder="Ví dụ: Trình độ trung bình, giao lưu vui vẻ, chia sẻ chi phí nước uống..."
+                className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-base shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm resize-none"
+              />
+            </div>
             
             <div className="grid gap-2">
               <Label>Ngày đánh</Label>
