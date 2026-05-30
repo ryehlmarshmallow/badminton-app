@@ -55,8 +55,9 @@ export function SignUpForm({
         },
       });
       if (error) throw error;
-      toast.success("Đăng ký thành công! Vui lòng kiểm tra email.");
-      router.push("/auth/sign-up-success");
+      toast.success("Đăng ký thành công!");
+      router.refresh();
+      router.push("/dashboard");
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "An error occurred";
       setError(message);
