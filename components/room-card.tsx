@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { createClient } from "@/lib/supabase/client";
 
@@ -32,6 +33,7 @@ interface Room {
 export function RoomCard({ room, currentUserId }: { room: Room; currentUserId: string }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [isLeaveConfirmOpen, setIsLeaveConfirmOpen] = useState(false);
   const [players, setPlayers] = useState<{ id: string; full_name: string; skill_level: string }[]>([]);
   const [isLoadingPlayers, setIsLoadingPlayers] = useState(false);
   
@@ -100,7 +102,6 @@ export function RoomCard({ room, currentUserId }: { room: Room; currentUserId: s
   };
 
   const handleLeave = async () => {
-    if (!confirm("Bạn có chắc muốn rời sân này? Tiền sẽ được hoàn lại vào ví.")) return;
     setIsLoading(true);
     try {
       await leaveRoom(room.id);
@@ -161,7 +162,7 @@ export function RoomCard({ room, currentUserId }: { room: Room; currentUserId: s
               className="w-full text-red-500 hover:text-red-600 border-red-200 hover:border-red-300" 
               onClick={(e) => {
                 e.stopPropagation();
-                handleLeave();
+                setIsLeaveConfirmOpen(true);
               }}
               disabled={isLoading}
             >
@@ -193,6 +194,9 @@ export function RoomCard({ room, currentUserId }: { room: Room; currentUserId: s
               {isFull && <Badge variant="secondary" className="shrink-0">Sân đã đầy</Badge>}
               {!isFull && <Badge variant="outline" className="text-emerald-600 border-emerald-600 bg-emerald-50 dark:bg-emerald-950/20 shrink-0">Còn chỗ</Badge>}
             </div>
+            <DialogDescription className="sr-only">
+              Chi tiết thông tin sân cầu lông và danh sách người chơi tham gia.
+            </DialogDescription>
             <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 flex items-center gap-1.5">
               <MapPin size={12} className="text-emerald-500 shrink-0" />
               <span className="font-medium text-zinc-600 dark:text-zinc-300 truncate">{room.location}</span>
@@ -316,10 +320,10 @@ export function RoomCard({ room, currentUserId }: { room: Room; currentUserId: s
                 <Button 
                   variant="outline" 
                   className="w-full text-red-500 hover:text-red-600 border-red-200 hover:border-red-300 hover:bg-red-50 dark:hover:bg-red-950/20 font-bold" 
-                  onClick={async (e) => {
+                  onClick={(e) => {
                     e.stopPropagation();
                     setIsDetailsOpen(false);
-                    await handleLeave();
+                    setIsLeaveConfirmOpen(true);
                   }}
                   disabled={isLoading}
                 >
@@ -340,6 +344,47 @@ export function RoomCard({ room, currentUserId }: { room: Room; currentUserId: s
                 </Button>
               )}
             </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Leave Confirmation Dialog */}
+      <Dialog open={isLeaveConfirmOpen} onOpenChange={setIsLeaveConfirmOpen}>
+        <DialogContent className="sm:max-w-[400px] overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 p-0 shadow-2xl bg-white dark:bg-zinc-950">
+          <div className="p-6 pb-4 flex items-start gap-4">
+            <div className="w-10 h-10 rounded-full bg-red-500/10 dark:bg-red-500/10 flex items-center justify-center shrink-0">
+              <LogOut className="h-5 w-5 text-red-600 dark:text-red-400" />
+            </div>
+            <div className="space-y-1">
+              <DialogTitle className="text-lg font-bold text-zinc-950 dark:text-white">
+                Xác nhận rời sân
+              </DialogTitle>
+              <DialogDescription className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                Bạn có chắc muốn rời sân này? Tiền sẽ được hoàn lại tự động vào ví của bạn.
+              </DialogDescription>
+            </div>
+          </div>
+          <DialogFooter className="p-4 bg-zinc-50 dark:bg-zinc-900/50 border-t border-zinc-100 dark:border-zinc-800/80 flex gap-2 sm:justify-end">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setIsLeaveConfirmOpen(false)}
+              className="text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900 font-semibold"
+            >
+              Hủy
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={async (e) => {
+                e.stopPropagation();
+                setIsLeaveConfirmOpen(false);
+                await handleLeave();
+              }}
+              className="font-bold shadow-sm"
+            >
+              Rời sân
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
