@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { Wallet, Settings, LogOut, ChevronDown } from "lucide-react";
+import { Wallet, Settings, LogOut, ChevronDown, Store } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -58,6 +58,12 @@ export function UserNav({ user }: UserNavProps) {
             <Link href="/dashboard/top-up" className="flex items-center gap-2 w-full cursor-pointer px-2 py-1.5 text-sm">
               <Wallet className="h-4 w-4 text-zinc-500" />
               <span>Nạp tiền vào ví</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard/courts" className="flex items-center gap-2 w-full cursor-pointer px-2 py-1.5 text-sm">
+              <Store className="h-4 w-4 text-zinc-500" />
+              <span>Quản lý sân cầu</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>

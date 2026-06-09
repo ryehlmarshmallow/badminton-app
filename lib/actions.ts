@@ -120,6 +120,12 @@ export async function createRoom(formData: FormData) {
   const maxPlayers = parseInt(formData.get("maxPlayers") as string) || 4;
   const description = formData.get("description") as string;
 
+  // Court booking specific fields
+  const courtId = formData.get("courtId") as string || null;
+  const bookingDate = formData.get("bookingDate") as string || null;
+  const bookingSlotsRaw = formData.get("bookingSlots") as string || null;
+  const bookingSlots = bookingSlotsRaw ? JSON.parse(bookingSlotsRaw) : [];
+
   // Wallet check for creator deposit
   const { data: profile } = await supabase
     .from("profiles")
@@ -146,7 +152,10 @@ export async function createRoom(formData: FormData) {
     price,
     max_players: maxPlayers,
     player_registry: [user.id], // Creator is auto-joined
-    description: description || null
+    description: description || null,
+    court_id: courtId || null,
+    booking_date: bookingDate || null,
+    booking_slots: bookingSlots
   });
 
   if (error) throw error;
@@ -221,4 +230,110 @@ export async function updateProfile(fullName: string, skillLevel: string) {
   if (error) throw new Error("Lỗi khi cập nhật hồ sơ");
 
   revalidatePath("/dashboard");
+}
+
+export async function createCourt(
+  name: string,
+  address: string,
+  phone: string,
+  numFields: number,
+  workingStart: number,
+  workingEnd: number,
+  fieldsData: unknown
+) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("Chưa đăng nhập");
+  if (!name.trim()) throw new Error("Tên sân không được để trống");
+  if (!address.trim()) throw new Error("Địa chỉ không được để trống");
+  if (!phone.trim()) throw new Error("Số điện thoại không được để trống");
+
+  const { error } = await supabase.from("courts").insert({
+    owner_id: user.id,
+    name,
+    address,
+    phone,
+    num_fields: numFields,
+    working_start: workingStart,
+    working_end: workingEnd,
+    fields_data: fieldsData,
+  });
+
+  if (error) throw error;
+
+  revalidatePath("/dashboard/courts");
+}
+
+export async function updateCourt(
+  courtId: string,
+  name: string,
+  address: string,
+  phone: string
+) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("Chưa đăng nhập");
+  if (!name.trim()) throw new Error("Tên sân không được để trống");
+  if (!address.trim()) throw new Error("Địa chỉ không được để trống");
+  if (!phone.trim()) throw new Error("Số điện thoại không được để trống");
+
+  const { error } = await supabase
+    .from("courts")
+    .update({ name, address, phone })
+    .eq("id", courtId)
+    .eq("owner_id", user.id);
+
+  if (error) throw error;
+
+  revalidatePath("/dashboard/courts");
+}
+
+export async function getOwnerCourts() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) return [];
+
+  const { data, error } = await supabase
+    .from("courts")
+    .select("*")
+    .eq("owner_id", user.id)
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function getAllCourts() {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("courts")
+    .select("*")
+    .order("name", { ascending: true });
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function getCourtBookings(courtId: string, dateStr: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("rooms")
+    .select("booking_slots")
+    .eq("court_id", courtId)
+    .eq("booking_date", dateStr);
+
+  if (error) throw error;
+
+  const bookedSlots: { field: number; hour: number }[] = [];
+  data?.forEach((room) => {
+    const slots = room.booking_slots as { field: number; hour: number }[] | null;
+    if (Array.isArray(slots)) {
+      bookedSlots.push(...slots);
+    }
+  });
+
+  return bookedSlots;
 }
