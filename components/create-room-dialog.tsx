@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PlusCircle, Calendar as CalendarIcon, ChevronDownIcon, Clock, Store, MapPin, Users } from "lucide-react";
 import { createRoom, getAllCourts, getCourtBookings } from "@/lib/actions";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
 import { Calendar } from "@/components/ui/calendar";
@@ -55,6 +55,7 @@ interface Court {
 
 export function CreateRoomDialog() {
   const [open, setOpen] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   
   // Date and Time state
@@ -253,7 +254,7 @@ export function CreateRoomDialog() {
           Tạo Phòng Mới
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[95vw] sm:max-w-[1300px] max-h-[92vh] overflow-y-auto">
+      <DialogContent ref={dialogRef} className="max-w-[95vw] sm:max-w-[1300px] max-h-[92vh] overflow-y-auto">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>Tạo trận đấu mới</DialogTitle>
@@ -311,32 +312,31 @@ export function CreateRoomDialog() {
                       Chọn sân cầu lông
                     </Label>
                     <Combobox
+                      items={allCourts.map((c) => `${c.name} - ${c.address}`)}
                       value={selectedCourtValue}
                       onValueChange={(val) => setSelectedCourtValue(val || "")}
                     >
-                      <div className="relative">
-                        <ComboboxInput
-                          id="court-select"
-                          placeholder="Tìm sân cầu lông..."
-                          className="w-full text-zinc-950 dark:text-zinc-50"
-                        />
-                      </div>
-                      <ComboboxContent className="!w-[150%] min-w-[350px] z-[100] bg-popover text-popover-foreground border shadow-lg max-h-60 rounded-md">
+                      <ComboboxInput
+                        id="court-select"
+                        placeholder="Tìm sân cầu lông..."
+                        className="w-full text-zinc-950 dark:text-zinc-50"
+                      />
+                      <ComboboxContent container={dialogRef} className="!w-[150%] min-w-[350px] z-[100] bg-popover text-popover-foreground border shadow-lg max-h-60 rounded-md">
+                        <ComboboxEmpty className="p-3 text-center text-sm text-zinc-500">
+                          Không tìm thấy sân
+                        </ComboboxEmpty>
                         <ComboboxList>
-                          {allCourts.map((c) => (
+                          {(item) => (
                             <ComboboxItem
-                              key={c.id}
-                              value={`${c.name} - ${c.address}`}
+                              key={item}
+                              value={item}
                               className="cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800 p-2 text-sm pr-10"
                             >
                               <span className="truncate block w-full text-left">
-                                {c.name} - {c.address}
+                                {item}
                               </span>
                             </ComboboxItem>
-                          ))}
-                          <ComboboxEmpty className="p-3 text-center text-sm text-zinc-500">
-                            Không tìm thấy sân
-                          </ComboboxEmpty>
+                          )}
                         </ComboboxList>
                       </ComboboxContent>
                     </Combobox>
