@@ -14,19 +14,26 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { PlusCircle, Store, Info, Phone, MapPin, Clock } from "lucide-react";
+import { PlusCircle, Store, Info, Phone, MapPin, Clock, Grid } from "lucide-react";
 import { createCourt, updateCourt } from "@/lib/actions";
 import { CourtGrid } from "./court-grid";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-interface SlotConfig {
+export interface SlotConfig {
   isAvailable: boolean;
   useDefaultPrice: boolean;
   customPrice: number;
 }
 
-interface Court {
+export interface Court {
   id: string;
   name: string;
   address: string;
@@ -191,7 +198,7 @@ export function RegisterCourtDialog({ court, trigger, onSuccess }: RegisterCourt
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="max-w-5xl max-h-[92vh] overflow-y-auto">
+      <DialogContent className="max-w-[95vw] sm:max-w-[1300px] max-h-[92vh] overflow-y-auto">
         <form onSubmit={handleSubmit} className="space-y-6">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-xl font-bold text-zinc-900 dark:text-zinc-50">
@@ -247,7 +254,10 @@ export function RegisterCourtDialog({ court, trigger, onSuccess }: RegisterCourt
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="numFields">Số lượng sân nhỏ (Fields)</Label>
+              <Label htmlFor="numFields" className="flex items-center gap-2">
+                <Grid className="h-4 w-4 text-emerald-500" />
+                Số lượng sân nhỏ
+              </Label>
               <Input
                 id="numFields"
                 type="number"
@@ -265,34 +275,40 @@ export function RegisterCourtDialog({ court, trigger, onSuccess }: RegisterCourt
                   <Clock className="h-3.5 w-3.5 text-emerald-500" />
                   Mở cửa
                 </Label>
-                <select
-                  id="workingStart"
-                  value={workingStart}
-                  onChange={(e) => setWorkingStart(parseInt(e.target.value))}
+                <Select
+                  value={workingStart.toString()}
+                  onValueChange={(val) => setWorkingStart(parseInt(val))}
                   disabled={isEdit}
-                  className="w-full h-9 px-2 rounded-md border bg-background text-sm"
                 >
-                  {Array.from({ length: 24 }).map((_, h) => (
-                    <option key={h} value={h}>{`${h.toString().padStart(2, "0")}:00`}</option>
-                  ))}
-                </select>
+                  <SelectTrigger id="workingStart" className="w-full text-sm">
+                    <SelectValue placeholder="Mở cửa" />
+                  </SelectTrigger>
+                  <SelectContent className="z-[110] bg-popover text-popover-foreground border shadow-md">
+                    {Array.from({ length: 24 }).map((_, h) => (
+                      <SelectItem key={h} value={h.toString()}>{`${h.toString().padStart(2, "0")}:00`}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="workingEnd" className="flex items-center gap-1.5">
                   <Clock className="h-3.5 w-3.5 text-red-500" />
                   Đóng cửa
                 </Label>
-                <select
-                  id="workingEnd"
-                  value={workingEnd}
-                  onChange={(e) => setWorkingEnd(parseInt(e.target.value))}
+                <Select
+                  value={workingEnd.toString()}
+                  onValueChange={(val) => setWorkingEnd(parseInt(val))}
                   disabled={isEdit}
-                  className="w-full h-9 px-2 rounded-md border bg-background text-sm"
                 >
-                  {Array.from({ length: 25 }, (_, i) => i).slice(1).map((h) => (
-                    <option key={h} value={h}>{`${h.toString().padStart(2, "0")}:00`}</option>
-                  ))}
-                </select>
+                  <SelectTrigger id="workingEnd" className="w-full text-sm">
+                    <SelectValue placeholder="Đóng cửa" />
+                  </SelectTrigger>
+                  <SelectContent className="z-[110] bg-popover text-popover-foreground border shadow-md">
+                    {Array.from({ length: 25 }, (_, i) => i).slice(1).map((h) => (
+                      <SelectItem key={h} value={h.toString()}>{`${h.toString().padStart(2, "0")}:00`}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </div>
@@ -416,15 +432,18 @@ export function RegisterCourtDialog({ court, trigger, onSuccess }: RegisterCourt
                 <div className="flex flex-col gap-2">
                   <Label htmlFor="cellAvailable" className="text-emerald-800 dark:text-emerald-300 font-medium">Trạng thái sân</Label>
                   <div className="flex items-center gap-2 h-9">
-                    <select
-                      id="cellAvailable"
+                    <Select
                       value={cellConfig.isAvailable ? "yes" : "no"}
-                      onChange={(e) => updateSelectedCellConfig({ isAvailable: e.target.value === "yes" })}
-                      className="h-9 rounded-md border border-emerald-200 dark:border-emerald-800 bg-background text-sm px-2 text-zinc-800 dark:text-zinc-100"
+                      onValueChange={(val) => updateSelectedCellConfig({ isAvailable: val === "yes" })}
                     >
-                      <option value="yes">Hoạt động (Cho thuê)</option>
-                      <option value="no">Tạm đóng (Không cho thuê)</option>
-                    </select>
+                      <SelectTrigger id="cellAvailable" className="w-[180px] h-9 text-sm text-zinc-800 dark:text-zinc-100 border-emerald-200 dark:border-emerald-800">
+                        <SelectValue placeholder="Chọn trạng thái" />
+                      </SelectTrigger>
+                      <SelectContent className="z-[110] bg-popover text-popover-foreground border shadow-md">
+                        <SelectItem value="yes">Hoạt động (Cho thuê)</SelectItem>
+                        <SelectItem value="no">Tạm đóng (Không cho thuê)</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 

@@ -10,6 +10,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { User, KeyRound, Mail } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface SettingsFormProps {
   email: string;
@@ -97,23 +104,19 @@ export function SettingsForm({ email, initialFullName, initialSkillLevel }: Sett
 
             <div className="space-y-2">
               <Label htmlFor="skillLevel" className="text-sm font-medium">Trình độ chơi</Label>
-              <div className="relative">
-                <select
-                  id="skillLevel"
-                  value={skillLevel}
-                  onChange={(e) => setSkillLevel(e.target.value)}
-                  className="w-full h-10 px-3 rounded-md border border-zinc-200 dark:border-zinc-800 bg-background text-zinc-950 dark:text-zinc-50 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 appearance-none cursor-pointer"
-                >
-                  <option value="Beginner">Mới chơi (Beginner)</option>
-                  <option value="Intermediate">Trung bình (Intermediate)</option>
-                  <option value="Advanced">Nâng cao (Advanced)</option>
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-zinc-500">
-                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
-                  </svg>
-                </div>
-              </div>
+              <Select
+                value={skillLevel}
+                onValueChange={(value) => setSkillLevel(value)}
+              >
+                <SelectTrigger id="skillLevel" className="w-full text-zinc-950 dark:text-zinc-50 border-zinc-200 dark:border-zinc-800">
+                  <SelectValue placeholder="Chọn trình độ" />
+                </SelectTrigger>
+                <SelectContent className="z-50 bg-popover text-popover-foreground border shadow-md">
+                  <SelectItem value="Beginner">Mới chơi (Beginner)</SelectItem>
+                  <SelectItem value="Intermediate">Trung bình (Intermediate)</SelectItem>
+                  <SelectItem value="Advanced">Nâng cao (Advanced)</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="pt-2">

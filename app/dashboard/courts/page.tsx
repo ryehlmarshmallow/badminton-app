@@ -1,24 +1,8 @@
 import { getOwnerCourts } from "@/lib/actions";
-import { RegisterCourtDialog } from "@/components/register-court-dialog";
+import { RegisterCourtDialog, Court } from "@/components/register-court-dialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Store, MapPin, Phone, Clock, Dumbbell, Edit } from "lucide-react";
-
-interface Court {
-  id: string;
-  name: string;
-  address: string;
-  phone: string;
-  num_fields: number;
-  working_start: number;
-  working_end: number;
-  fields_data: {
-    samePrice: boolean;
-    globalPrice: number;
-    rowPrices: number[];
-    slots: Record<string, unknown>;
-  };
-}
 
 export const dynamic = "force-dynamic";
 
