@@ -12,7 +12,7 @@ export default function DashboardPage() {
 
       <div className="flex justify-between items-center border-b pb-4">
         <div>
-          <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">Danh sách sân đang chờ</h2>
+          <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">Danh sách phòng đang chờ</h2>
           <p className="text-sm text-zinc-500">Tìm và tham gia các trận đấu phù hợp với bạn</p>
         </div>
         <CreateRoomDialog />

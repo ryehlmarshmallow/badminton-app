@@ -93,7 +93,7 @@ export function RoomCard({ room, currentUserId }: { room: Room; currentUserId: s
     setIsLoading(true);
     try {
       await joinRoom(room.id);
-      toast.success("Đã tham gia sân!");
+      toast.success("Đã tham gia phòng!");
     } catch (e: unknown) {
       toast.error(e instanceof Error ? e.message : "Đã xảy ra lỗi");
     } finally {
@@ -105,7 +105,7 @@ export function RoomCard({ room, currentUserId }: { room: Room; currentUserId: s
     setIsLoading(true);
     try {
       await leaveRoom(room.id);
-      toast.success("Đã rời sân thành công!");
+      toast.success("Đã rời phòng thành công!");
     } catch (e: unknown) {
       toast.error(e instanceof Error ? e.message : "Đã xảy ra lỗi");
     } finally {
@@ -129,7 +129,7 @@ export function RoomCard({ room, currentUserId }: { room: Room; currentUserId: s
           <CardHeader className="pb-3">
             <div className="flex justify-between items-start">
               <CardTitle className="text-lg font-bold truncate pr-2">{room.title}</CardTitle>
-              {isFull && <Badge variant="secondary">Sân đã đầy</Badge>}
+              {isFull && <Badge variant="secondary">Phòng đã đầy</Badge>}
               {!isFull && <Badge variant="outline" className="text-emerald-600 border-emerald-600">Còn chỗ</Badge>}
             </div>
           </CardHeader>
@@ -167,7 +167,7 @@ export function RoomCard({ room, currentUserId }: { room: Room; currentUserId: s
               disabled={isLoading}
             >
               <LogOut size={16} className="mr-2" />
-              Rời sân
+              Rời phòng
             </Button>
           ) : (
             <Button 
@@ -178,7 +178,7 @@ export function RoomCard({ room, currentUserId }: { room: Room; currentUserId: s
               }}
               disabled={isLoading || isFull}
             >
-              Tham gia sân
+              Tham gia phòng
             </Button>
           )}
         </CardFooter>
@@ -191,11 +191,11 @@ export function RoomCard({ room, currentUserId }: { room: Room; currentUserId: s
               <DialogTitle className="text-xl font-extrabold tracking-tight text-zinc-950 dark:text-white flex items-center gap-2">
                 {room.title}
               </DialogTitle>
-              {isFull && <Badge variant="secondary" className="shrink-0">Sân đã đầy</Badge>}
+              {isFull && <Badge variant="secondary" className="shrink-0">Phòng đã đầy</Badge>}
               {!isFull && <Badge variant="outline" className="text-emerald-600 border-emerald-600 bg-emerald-50 dark:bg-emerald-950/20 shrink-0">Còn chỗ</Badge>}
             </div>
             <DialogDescription className="sr-only">
-              Chi tiết thông tin sân cầu lông và danh sách người chơi tham gia.
+              Chi tiết thông tin phòng chơi và danh sách người chơi tham gia.
             </DialogDescription>
             <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 flex items-center gap-1.5">
               <MapPin size={12} className="text-emerald-500 shrink-0" />
@@ -328,7 +328,7 @@ export function RoomCard({ room, currentUserId }: { room: Room; currentUserId: s
                   disabled={isLoading}
                 >
                   <LogOut size={16} className="mr-2" />
-                  Rời sân
+                  Rời phòng
                 </Button>
               ) : (
                 <Button 
@@ -340,7 +340,7 @@ export function RoomCard({ room, currentUserId }: { room: Room; currentUserId: s
                   }}
                   disabled={isLoading || isFull}
                 >
-                  Tham gia sân
+                  Tham gia phòng
                 </Button>
               )}
             </div>
@@ -357,10 +357,10 @@ export function RoomCard({ room, currentUserId }: { room: Room; currentUserId: s
             </div>
             <div className="space-y-1">
               <DialogTitle className="text-lg font-bold text-zinc-950 dark:text-white">
-                Xác nhận rời sân
+                Xác nhận rời phòng
               </DialogTitle>
               <DialogDescription className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                Bạn có chắc muốn rời sân này? Tiền sẽ được hoàn lại tự động vào ví của bạn.
+                Bạn có chắc muốn rời phòng này? Tiền sẽ được hoàn lại tự động vào ví của bạn.
               </DialogDescription>
             </div>
           </div>
@@ -383,7 +383,7 @@ export function RoomCard({ room, currentUserId }: { room: Room; currentUserId: s
               }}
               className="font-bold shadow-sm"
             >
-              Rời sân
+              Rời phòng
             </Button>
           </DialogFooter>
         </DialogContent>

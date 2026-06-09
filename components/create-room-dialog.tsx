@@ -84,7 +84,7 @@ export function CreateRoomDialog() {
       <DialogTrigger asChild>
         <Button className="bg-emerald-600 hover:bg-emerald-700 font-bold">
           <PlusCircle className="mr-2 h-5 w-5" />
-          Tạo Sân Mới
+          Tạo Phòng Mới
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
@@ -92,7 +92,7 @@ export function CreateRoomDialog() {
           <DialogHeader>
             <DialogTitle>Tạo trận đấu mới</DialogTitle>
             <DialogDescription>
-              Lưu ý: Bạn sẽ cần đặt cọc trước 1 slot để tạo sân.
+              Lưu ý: Bạn sẽ cần đặt cọc trước 1 slot để tạo phòng.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">

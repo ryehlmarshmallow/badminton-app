@@ -15,7 +15,7 @@ export async function RoomList() {
   if (!rooms || rooms.length === 0) {
     return (
       <div className="text-center py-20 bg-zinc-50 dark:bg-zinc-900/30 rounded-xl border border-dashed">
-        <p className="text-zinc-500">Hiện chưa có sân nào được tạo. Hãy là người đầu tiên!</p>
+        <p className="text-zinc-500">Hiện chưa có phòng nào được tạo. Hãy là người đầu tiên!</p>
       </div>
     );
   }

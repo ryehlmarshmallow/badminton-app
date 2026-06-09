@@ -16,11 +16,11 @@ export async function joinRoom(roomId: string) {
     .eq("id", roomId)
     .single();
 
-  if (roomError || !room) throw new Error("Không tìm thấy sân");
+  if (roomError || !room) throw new Error("Không tìm thấy phòng");
 
   // 2. Checks
-  if (room.player_registry.includes(user.id)) throw new Error("Bạn đã tham gia sân này rồi");
-  if (room.player_registry.length >= room.max_players) throw new Error("Sân đã đầy");
+  if (room.player_registry.includes(user.id)) throw new Error("Bạn đã tham gia phòng này rồi");
+  if (room.player_registry.length >= room.max_players) throw new Error("Phòng đã đầy");
 
   // 3. Get user balance
   const { data: profile, error: profileError } = await supabase
@@ -51,7 +51,7 @@ export async function joinRoom(roomId: string) {
   if (joinError) {
     // Rollback balance if join fails (crude)
     await supabase.from("profiles").update({ balance: profile.balance }).eq("id", user.id);
-    throw new Error("Lỗi khi tham gia sân");
+    throw new Error("Lỗi khi tham gia phòng");
   }
 
   revalidatePath("/dashboard");
@@ -69,8 +69,8 @@ export async function leaveRoom(roomId: string) {
     .eq("id", roomId)
     .single();
 
-  if (roomError || !room) throw new Error("Không tìm thấy sân");
-  if (!room.player_registry.includes(user.id)) throw new Error("Bạn chưa tham gia sân này");
+  if (roomError || !room) throw new Error("Không tìm thấy phòng");
+  if (!room.player_registry.includes(user.id)) throw new Error("Bạn chưa tham gia phòng này");
 
   // 1. Remove from registry (or delete the room if empty)
   const newRegistry = room.player_registry.filter((id: string) => id !== user.id);
@@ -80,13 +80,13 @@ export async function leaveRoom(roomId: string) {
       .from("rooms")
       .delete()
       .eq("id", roomId);
-    if (deleteError) throw new Error("Lỗi khi rời và hủy sân");
+    if (deleteError) throw new Error("Lỗi khi rời và hủy phòng");
   } else {
     const { error: leaveError } = await supabase
       .from("rooms")
       .update({ player_registry: newRegistry })
       .eq("id", roomId);
-    if (leaveError) throw new Error("Lỗi khi rời sân");
+    if (leaveError) throw new Error("Lỗi khi rời phòng");
   }
 
   // 2. Refund balance
@@ -128,7 +128,7 @@ export async function createRoom(formData: FormData) {
     .single();
 
   if (!profile || profile.balance < price) {
-    throw new Error("Số dư không đủ để đặt cọc sân!");
+    throw new Error("Số dư không đủ để đặt cọc phòng!");
   }
 
   // 1. Deduct price
