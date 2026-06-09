@@ -60,7 +60,7 @@ export function CourtGrid({
     if (samePrice) {
       return globalPrice;
     } else {
-      return rowPrices[fieldIndex] !== undefined ? rowPrices[fieldIndex] : globalPrice;
+      return rowPrices[fieldIndex - 1] !== undefined ? rowPrices[fieldIndex - 1] : globalPrice;
     }
   };
 
@@ -71,7 +71,7 @@ export function CourtGrid({
 
   return (
     <div className="w-full border border-zinc-200 dark:border-zinc-800 rounded-xl bg-zinc-50/50 dark:bg-zinc-950/50 p-4">
-      <div className="w-full overflow-x-auto scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800">
+      <div className="w-full overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800">
         <div className="min-w-[1200px] grid gap-y-1">
           {/* Header Row: Hours */}
           <div className="grid grid-cols-[80px_repeat(24,1fr)] gap-x-1 items-center mb-2">
@@ -137,7 +137,7 @@ export function CourtGrid({
                       // Available
                       cellClasses = cn(
                         "bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 cursor-pointer shadow-2xs",
-                        isSelected && "ring-2 ring-emerald-500 border-emerald-500 scale-[1.02] z-10 shadow-sm"
+                        isSelected && "ring-2 ring-inset ring-emerald-500 border-emerald-500 z-10 shadow-sm"
                       );
                     }
                   } else {
@@ -151,7 +151,7 @@ export function CourtGrid({
                     } else if (isSelected) {
                       // Selected by current user
                       isClickable = true;
-                      cellClasses = "bg-emerald-500 text-white border-emerald-600 ring-2 ring-offset-1 dark:ring-offset-zinc-950 ring-emerald-500 scale-[1.02] z-10 shadow-md font-bold cursor-pointer";
+                      cellClasses = "bg-emerald-500 text-white border-emerald-600 ring-2 ring-inset ring-emerald-500 z-10 shadow-md font-bold cursor-pointer";
                     } else {
                       // Unoccupied / Free
                       isClickable = true;
@@ -182,7 +182,7 @@ export function CourtGrid({
                         <>
                           <span className={cn(
                             "text-[11px] font-bold leading-none",
-                            isSelected ? "text-white" : "text-emerald-700 dark:text-emerald-400"
+                             isSelected ? "text-black dark:text-white" : "text-emerald-700 dark:text-emerald-400"
                           )}>
                             {price >= 1000 ? `${Math.round(price / 1000)}k` : `${price}đ`}
                           </span>

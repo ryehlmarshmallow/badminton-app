@@ -66,7 +66,7 @@ export function CreateRoomDialog() {
   // Hiring Court integration state
   const [bookingMode, setBookingMode] = useState<"court" | "free">("court");
   const [allCourts, setAllCourts] = useState<Court[]>([]);
-  const [selectedCourtId, setSelectedCourtId] = useState("");
+  const [selectedCourtValue, setSelectedCourtValue] = useState("");
   const [selectedCourt, setSelectedCourt] = useState<Court | null>(null);
   const [courtBookings, setCourtBookings] = useState<Record<string, boolean>>({});
   const [isFetchingBookings, setIsFetchingBookings] = useState(false);
@@ -84,7 +84,7 @@ export function CreateRoomDialog() {
           const courts = await getAllCourts();
           setAllCourts(courts);
           if (courts.length > 0) {
-            setSelectedCourtId(courts[0].id);
+            setSelectedCourtValue(`${courts[0].name} - ${courts[0].address}`);
           }
         } catch {
           toast.error("Không thể tải danh sách sân.");
@@ -96,8 +96,8 @@ export function CreateRoomDialog() {
 
   // Fetch bookings when selected court or date changes
   useEffect(() => {
-    if (selectedCourtId) {
-      const court = allCourts.find((c) => c.id === selectedCourtId) || null;
+    if (selectedCourtValue) {
+      const court = allCourts.find((c) => `${c.name} - ${c.address}` === selectedCourtValue) || null;
       setSelectedCourt(court);
       setSelectedSlots({});
 
@@ -106,7 +106,7 @@ export function CreateRoomDialog() {
           setIsFetchingBookings(true);
           try {
             const formattedDate = format(date, "yyyy-MM-dd");
-            const bookings = await getCourtBookings(selectedCourtId, formattedDate);
+            const bookings = await getCourtBookings(court.id, formattedDate);
             const bookingsMap: Record<string, boolean> = {};
             bookings.forEach((b: { field: number; hour: number }) => {
               bookingsMap[`${b.field}-${b.hour}`] = true;
@@ -127,7 +127,7 @@ export function CreateRoomDialog() {
       setCourtBookings({});
       setSelectedSlots({});
     }
-  }, [selectedCourtId, date, allCourts]);
+  }, [selectedCourtValue, date, allCourts]);
 
   // Pricing helper
   const getCellPrice = (court: Court, field: number, hour: number) => {
@@ -253,10 +253,7 @@ export function CreateRoomDialog() {
           Tạo Phòng Mới
         </Button>
       </DialogTrigger>
-      <DialogContent className={cn(
-        bookingMode === "court" ? "sm:max-w-[800px] md:max-w-[1000px]" : "sm:max-w-[425px]", 
-        "max-h-[92vh] overflow-y-auto transition-all duration-300"
-      )}>
+      <DialogContent className="max-w-[95vw] sm:max-w-[1300px] max-h-[92vh] overflow-y-auto">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>Tạo trận đấu mới</DialogTitle>
@@ -314,8 +311,8 @@ export function CreateRoomDialog() {
                       Chọn sân cầu lông
                     </Label>
                     <Combobox
-                      value={selectedCourtId}
-                      onValueChange={(val) => setSelectedCourtId(val || "")}
+                      value={selectedCourtValue}
+                      onValueChange={(val) => setSelectedCourtValue(val || "")}
                     >
                       <div className="relative">
                         <ComboboxInput
@@ -324,11 +321,17 @@ export function CreateRoomDialog() {
                           className="w-full text-zinc-950 dark:text-zinc-50"
                         />
                       </div>
-                      <ComboboxContent className="w-full z-[100] bg-popover text-popover-foreground border shadow-lg max-h-60 rounded-md">
+                      <ComboboxContent className="!w-[150%] min-w-[350px] z-[100] bg-popover text-popover-foreground border shadow-lg max-h-60 rounded-md">
                         <ComboboxList>
                           {allCourts.map((c) => (
-                            <ComboboxItem key={c.id} value={c.id} className="cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800 p-2 text-sm">
-                              {c.name} - {c.address}
+                            <ComboboxItem
+                              key={c.id}
+                              value={`${c.name} - ${c.address}`}
+                              className="cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800 p-2 text-sm pr-10"
+                            >
+                              <span className="truncate block w-full text-left">
+                                {c.name} - {c.address}
+                              </span>
                             </ComboboxItem>
                           ))}
                           <ComboboxEmpty className="p-3 text-center text-sm text-zinc-500">
