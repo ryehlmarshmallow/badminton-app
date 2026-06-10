@@ -10,6 +10,7 @@ export async function RoomList() {
   const { data: rooms } = await supabase
     .from("rooms")
     .select("*")
+    .is("deleted_at", null)
     .order("start_time", { ascending: true });
 
   if (!rooms || rooms.length === 0) {

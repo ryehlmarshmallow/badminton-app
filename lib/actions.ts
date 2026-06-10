@@ -14,6 +14,7 @@ export async function joinRoom(roomId: string) {
     .from("rooms")
     .select("*")
     .eq("id", roomId)
+    .is("deleted_at", null)
     .single();
 
   if (roomError || !room) throw new Error("Không tìm thấy phòng");
@@ -72,13 +73,16 @@ export async function leaveRoom(roomId: string) {
   if (roomError || !room) throw new Error("Không tìm thấy phòng");
   if (!room.player_registry.includes(user.id)) throw new Error("Bạn chưa tham gia phòng này");
 
-  // 1. Remove from registry (or delete the room if empty)
+  // 1. Remove from registry (or soft-delete the room if empty)
   const newRegistry = room.player_registry.filter((id: string) => id !== user.id);
   
   if (newRegistry.length === 0) {
     const { error: deleteError } = await supabase
       .from("rooms")
-      .delete()
+      .update({ 
+        player_registry: newRegistry,
+        deleted_at: new Date().toISOString()
+      })
       .eq("id", roomId);
     if (deleteError) throw new Error("Lỗi khi rời và hủy phòng");
   } else {

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Calendar, Users, LogOut, Info, Loader2 } from "lucide-react";
 import { joinRoom, leaveRoom } from "@/lib/actions";
+import { ChatBox } from "@/components/chat-box";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -185,7 +186,7 @@ export function RoomCard({ room, currentUserId }: { room: Room; currentUserId: s
       </Card>
 
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-        <DialogContent className="sm:max-w-[500px] overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 p-0 shadow-2xl bg-white dark:bg-zinc-950">
+        <DialogContent className="sm:max-w-[950px] w-[95vw] overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 p-0 shadow-2xl bg-white dark:bg-zinc-950">
           <DialogHeader className="p-6 pb-4 bg-emerald-500/10 dark:bg-emerald-500/5 border-b border-zinc-100 dark:border-zinc-800/80">
             <div className="flex justify-between items-start gap-4">
               <DialogTitle className="text-xl font-extrabold tracking-tight text-zinc-950 dark:text-white flex items-center gap-2">
@@ -203,7 +204,8 @@ export function RoomCard({ room, currentUserId }: { room: Room; currentUserId: s
             </div>
           </DialogHeader>
 
-          <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-zinc-100 dark:divide-zinc-800 bg-white dark:bg-zinc-950">
+            <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
             {/* Match Information Cards */}
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-zinc-50 dark:bg-zinc-900/50 p-3 rounded-lg border border-zinc-100 dark:border-zinc-800/80 flex flex-col justify-center">
@@ -304,6 +306,11 @@ export function RoomCard({ room, currentUserId }: { room: Room; currentUserId: s
               </div>
             </div>
           </div>
+
+          <div className="p-6 max-h-[60vh] flex flex-col justify-between">
+            <ChatBox roomId={room.id} currentUserId={currentUserId} isJoined={isJoined} />
+          </div>
+        </div>
 
           <DialogFooter className="p-6 bg-zinc-50 dark:bg-zinc-900/50 border-t border-zinc-100 dark:border-zinc-800/80 flex gap-3 sm:justify-end">
             <Button
