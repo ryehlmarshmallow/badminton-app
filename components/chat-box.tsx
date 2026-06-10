@@ -29,6 +29,11 @@ export function ChatBox({ roomId, currentUserId, isJoined }: ChatBoxProps) {
   const [newMessage, setNewMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
   
   const chatEndRef = useRef<HTMLDivElement>(null);
   const profilesCacheRef = useRef<Record<string, string>>({});
@@ -229,7 +234,7 @@ export function ChatBox({ roomId, currentUserId, isJoined }: ChatBoxProps) {
                   {msg.profiles?.full_name || 'Người dùng'}
                 </span>
                 <div className={`flex items-end gap-1.5 w-full ${isMe ? 'justify-end' : 'justify-start'}`}>
-                  {isMe && (
+                  {isMe && isMounted && (
                     <span className="text-[9px] text-zinc-400 dark:text-zinc-550 shrink-0">
                       {formatTime(msg.created_at)}
                     </span>
@@ -243,7 +248,7 @@ export function ChatBox({ roomId, currentUserId, isJoined }: ChatBoxProps) {
                   >
                     {msg.content}
                   </div>
-                  {!isMe && (
+                  {!isMe && isMounted && (
                     <span className="text-[9px] text-zinc-400 dark:text-zinc-550 shrink-0">
                       {formatTime(msg.created_at)}
                     </span>

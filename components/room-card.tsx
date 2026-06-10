@@ -142,7 +142,7 @@ export function RoomCard({ room, currentUserId }: { room: Room; currentUserId: s
               </div>
               <div className="flex items-center text-sm text-zinc-600 dark:text-zinc-400">
                 <Calendar size={16} className="mr-2 shrink-0 text-emerald-500" />
-                <span className="capitalize">{formattedDate} • {formattedTimeRange}</span>
+                <span suppressHydrationWarning className="capitalize">{formattedDate} • {formattedTimeRange}</span>
               </div>
               <div className="flex items-center text-sm text-zinc-600 dark:text-zinc-400">
                 <Users size={16} className="mr-2 shrink-0 text-emerald-500" />
@@ -210,11 +210,11 @@ export function RoomCard({ room, currentUserId }: { room: Room; currentUserId: s
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-zinc-50 dark:bg-zinc-900/50 p-3 rounded-lg border border-zinc-100 dark:border-zinc-800/80 flex flex-col justify-center">
                 <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-1">Thời gian</span>
-                <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200 flex items-center gap-1 capitalize">
+                <span suppressHydrationWarning className="text-xs font-bold text-zinc-800 dark:text-zinc-200 flex items-center gap-1 capitalize">
                   <Calendar size={14} className="text-emerald-500 shrink-0" />
                   {formattedDate}
                 </span>
-                <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 mt-0.5 ml-5">
+                <span suppressHydrationWarning className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 mt-0.5 ml-5">
                   {formattedTimeRange}
                 </span>
               </div>
