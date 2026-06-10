@@ -128,7 +128,9 @@ export function ChatBox({ roomId, currentUserId, isJoined }: ChatBoxProps) {
           });
         }
       )
-      .subscribe();
+      .subscribe((status, err) => {
+        console.log(`Realtime subscription status for room ${roomId}:`, status, err);
+      });
 
     return () => {
       supabase.removeChannel(channel);
@@ -150,15 +152,31 @@ export function ChatBox({ roomId, currentUserId, isJoined }: ChatBoxProps) {
     setIsSending(true);
 
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('messages')
         .insert({
           room_id: roomId,
           profile_id: currentUserId,
           content: content,
-        });
+        })
+        .select(`
+          id,
+          room_id,
+          profile_id,
+          content,
+          created_at,
+          profiles ( full_name )
+        `)
+        .single();
 
       if (error) throw error;
+
+      if (data) {
+        setMessages((prev) => {
+          if (prev.some((m) => m.id === data.id)) return prev;
+          return [...prev, data as unknown as Message];
+        });
+      }
     } catch (err: any) {
       alert(`Không thể gửi tin nhắn: ${err.message || 'Lỗi không xác định'}`);
       setNewMessage(content); // Restore message
