@@ -210,7 +210,7 @@ export function ChatBox({ roomId, currentUserId, isJoined }: ChatBoxProps) {
                 <span className="text-[10px] text-zinc-400 dark:text-zinc-500 mb-0.5 px-1 font-semibold">
                   {msg.profiles?.full_name || 'Người dùng'}
                 </span>
-                <div className="flex items-end gap-1.5 w-full">
+                <div className={`flex items-end gap-1.5 w-full ${isMe ? 'justify-end' : 'justify-start'}`}>
                   {isMe && (
                     <span className="text-[9px] text-zinc-400 dark:text-zinc-550 shrink-0">
                       {formatTime(msg.created_at)}
